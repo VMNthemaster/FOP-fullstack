@@ -157,7 +157,6 @@ export const updateUserFields = async (req, res) => {
       .json({ success: false, message: 'Internal Server Error' })
   }
 
-
   let updatedUserFields
   try {
     await User.updateMany(
@@ -170,11 +169,32 @@ export const updateUserFields = async (req, res) => {
       .json({ success: false, message: 'Internal Server Error', error })
   }
 
-  return res
-    .status(200)
-    .json({
-      success: true,
-      message: 'Successfully updated all documents',
-      updatedUserFields,
-    })
+  return res.status(200).json({
+    success: true,
+    message: 'Successfully updated all documents',
+    updatedUserFields,
+  })
+}
+
+export const addPublicAddress = async (req, res) => {
+  const { username, publicAddress } = req.body
+
+  if (!username || !publicAddress) {
+    return res
+      .status(400)
+      .json({ success: false, message: 'Incomplete fields' })
+  }
+
+  try {
+    await User.updateOne({ username }, { publicAddress })
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: 'Internal Server Error', error })
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: 'Successfully updated public address',
+  })
 }

@@ -36,6 +36,8 @@ const userSchema = new mongoose.Schema({
         required: true,
         default: false,
     }
+
+    // category
 })
 
 
