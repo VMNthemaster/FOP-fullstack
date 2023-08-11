@@ -56,6 +56,8 @@ export const signup = async (req, res) => {
     contact,
     password: hashedPassword,
     username,
+    publicAddress: '0x',
+    isVerified: false,
   })
 
   try {
@@ -64,7 +66,7 @@ export const signup = async (req, res) => {
   } catch (err) {
     return res
       .status(500)
-      .json({ success: false, message: 'Internal Server Error' })
+      .json({ success: false, message: 'Internal Server Error', err })
   }
 
   return res.status(201).json({

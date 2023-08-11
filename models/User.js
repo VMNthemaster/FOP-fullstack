@@ -29,12 +29,18 @@ const userSchema = new mongoose.Schema({
     publicAddress: {
         type: String,
         required: true,
-        default: ''
+        //default: "0x"
+        role: {
+            default: "0x"
+        }
     },
     isVerified: {
         type: Boolean,
         required: true,
-        default: false,
+        //default: false,
+        role: {
+            default: false,
+        }
     }
 
     // category
