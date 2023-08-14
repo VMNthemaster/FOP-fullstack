@@ -200,3 +200,28 @@ export const addPublicAddress = async (req, res) => {
     message: 'Successfully updated public address',
   })
 }
+
+export const verifyPublicAddress = async (req, res) => {
+  const { publicAddress } = req.body
+
+  if (!publicAddress) {
+    return res
+      .status(400)
+      .json({ success: false, message: 'Public address not found' })
+  }
+
+  let verifiedUser
+  try {
+    verifiedUser = await User.updateOne({ publicAddress }, { $set: { isVerified: true } })
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: 'Internal Server Error', error })
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: 'Successfully verified public address',
+    verifiedUser,
+  })
+}
