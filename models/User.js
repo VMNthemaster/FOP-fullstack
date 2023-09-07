@@ -41,6 +41,11 @@ const userSchema = new mongoose.Schema({
         role: {
             default: false,
         }
+    },
+    category: {
+        type: String,
+        enum: ['INVESTOR', 'LISTER', 'TENANT', 'ADMIN'],
+        default: 'INVESTOR'
     }
 
     // category

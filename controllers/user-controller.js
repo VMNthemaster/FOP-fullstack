@@ -3,9 +3,9 @@ import User from '../models/User'
 import Username from '../models/Username'
 
 export const signup = async (req, res) => {
-  const { name, email, password, username, contact } = req.body
+  const { name, email, password, username, contact, category } = req.body
 
-  if (!name || !email || !password || !username || !contact) {
+  if (!name || !email || !password || !username || !contact || !category) {
     return res
       .status(500)
       .json({ success: false, message: 'Incomplete details' })
@@ -58,6 +58,7 @@ export const signup = async (req, res) => {
     username,
     publicAddress: '0x',
     isVerified: false,
+    category,
   })
 
   try {
