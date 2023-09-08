@@ -4,8 +4,9 @@ pragma solidity >0.8.0;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
+//import "@openzeppelin/contracts/token/ERC1155/ERC1155Holder.sol";
 
-contract Token is ERC1155, IERC1155Receiver {
+contract Token is ERC1155, IERC1155Receiver  {
     address payable public contractAddress;
 
     struct PropertyDetails {
@@ -18,7 +19,7 @@ contract Token is ERC1155, IERC1155Receiver {
 
     PropertyDetails[] propertyDetails;
 
-    constructor() ERC1155("") {
+    constructor() ERC1155("") IERC1155Receiver() {
         contractAddress = payable(address(this));
     }
 
@@ -26,15 +27,13 @@ contract Token is ERC1155, IERC1155Receiver {
         return propertyDetails;
     }
 
-    function getSingleToken(
-        uint256 _id
-    ) external view returns (bool isPresent, PropertyDetails memory pd) {
+    function getSingleToken(uint256 _id) external view returns (bool isPresent, PropertyDetails memory pd) {
         for (uint i = 0; i < propertyDetails.length; i++) {
             if (propertyDetails[i].id == _id) {
                 return (true, propertyDetails[i]);
             }
         }
-        return (false, propertyDetails[0]); // sending a random token detail just to stay consistent with return type
+        return (false, propertyDetails[0]);     // sending a random token detail just to stay consistent with return type
     }
 
     function getTokenDetails(
@@ -53,10 +52,7 @@ contract Token is ERC1155, IERC1155Receiver {
         return (isPresent, indexOfToken);
     }
 
-    function getSellerDetails(
-        PropertyDetails memory _pd,
-        address _seller
-    ) internal pure returns (bool, uint256, uint256) {
+    function getSellerDetails(PropertyDetails memory _pd, address _seller) internal pure returns (bool, uint256, uint256) {
         bool isSellerPresent = false;
         uint256 amount = 0;
         uint256 indexOfSeller = 0;
@@ -64,7 +60,7 @@ contract Token is ERC1155, IERC1155Receiver {
         PropertyDetails memory pd = _pd;
 
         for (uint256 i = 0; i < pd.recipientAddress.length; i++) {
-            if (pd.recipientAddress[i] == _seller) {
+            if(pd.recipientAddress[i] == _seller){
                 isSellerPresent = true;
                 amount = pd.recipientAmount[i];
                 indexOfSeller = i;
@@ -73,19 +69,17 @@ contract Token is ERC1155, IERC1155Receiver {
         }
 
         return (isSellerPresent, indexOfSeller, amount);
+
     }
 
-    function getBuyerDetails(
-        PropertyDetails memory _pd,
-        address _buyer
-    ) internal pure returns (bool, uint256) {
+    function getBuyerDetails(PropertyDetails memory _pd, address _buyer) internal pure returns (bool, uint256) {
         bool isBuyerPresent = false;
         uint256 indexOfBuyer = 0;
 
         PropertyDetails memory pd = _pd;
 
         for (uint256 i = 0; i < pd.recipientAddress.length; i++) {
-            if (pd.recipientAddress[i] == _buyer) {
+            if(pd.recipientAddress[i] == _buyer){
                 isBuyerPresent = true;
                 indexOfBuyer = i;
                 break;
@@ -111,40 +105,30 @@ contract Token is ERC1155, IERC1155Receiver {
         }
     }
 
-    function resellToken(
-        uint256 _id,
-        address _to,
-        address _from,
-        uint256 _amount
-    ) external {
+    function resellToken(uint256 _id, address _to, address _from, uint256 _amount) external {
         (bool isPresent, uint256 indexOfToken) = getTokenDetails(_id);
         require(isPresent, "Token Not Found");
         PropertyDetails storage pd = propertyDetails[indexOfToken];
 
-        (
-            bool isSellerPresent,
-            uint256 indexOfSeller,
-            uint256 amount
-        ) = getSellerDetails(pd, _from);
+        (bool isSellerPresent, uint256 indexOfSeller, uint256 amount) = getSellerDetails(pd, _from);
 
         require(isSellerPresent == true, "Seller Does not hold this token");
-        require(
-            _amount <= amount,
-            "Seller does not own required amount of tokens"
-        );
+        require(_amount <= amount, "Seller does not own required amount of tokens");
 
         (bool isBuyerPresent, uint256 indexOfBuyer) = getBuyerDetails(pd, _to);
 
-        if (isBuyerPresent == true) {
+        if(isBuyerPresent == true){
             pd.recipientAmount[indexOfBuyer] += _amount;
             pd.recipientAmount[indexOfSeller] -= _amount;
-        } else {
+        }
+        else{
             pd.recipientAddress.push(_to);
             pd.recipientAmount.push(_amount);
             pd.recipientAmount[indexOfSeller] -= _amount;
         }
 
         _safeTransferFrom(_from, _to, _id, _amount, "");
+        
     }
 
     function mintNewToken(
@@ -158,13 +142,14 @@ contract Token is ERC1155, IERC1155Receiver {
         pd.recipientAddress = _recipientAddress;
         pd.recipientAmount = _recipientAmount;
         pd.tokenAvailable = 100;
-        propertyDetails.push(pd);
 
         _mint(address(contractAddress), propertyDetails.length, 100, "");
+        propertyDetails.push(pd);   // keep this below else token id will change
 
         return pd;
         /* If `to` refers to a smart contract, it must implement {IERC1155Receiver-onERC1155Received}
         and return the acceptance magic value. */
+
     }
 
     function allotToken(
@@ -186,23 +171,11 @@ contract Token is ERC1155, IERC1155Receiver {
         pd.tokenAvailable -= _recipientAmount;
     }
 
-    function onERC1155Received(
-        address,
-        address,
-        uint256,
-        uint256,
-        bytes memory
-    ) public virtual override returns (bytes4) {
+    function onERC1155Received(address, address, uint256, uint256, bytes memory) public virtual override returns (bytes4) {
         return this.onERC1155Received.selector;
     }
 
-    function onERC1155BatchReceived(
-        address,
-        address,
-        uint256[] memory,
-        uint256[] memory,
-        bytes memory
-    ) public virtual override returns (bytes4) {
+    function onERC1155BatchReceived(address, address, uint256[] memory, uint256[] memory, bytes memory) public virtual override returns (bytes4) {
         return this.onERC1155BatchReceived.selector;
     }
 }
