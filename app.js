@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import userRouter from './routes/user-routes'
+import propertyRouter from './routes/property-routes'
 dotenv.config()
 
 const app = express()
@@ -11,6 +12,8 @@ app.use(express.json())
 
 // routes
 app.use('/api/users', userRouter)
+app.use('/api/properties', propertyRouter)
+
 
 app.get('/', (req, res) => {
   return res.json('Hello world')
