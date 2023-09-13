@@ -75,3 +75,20 @@ export const getSingleProperty = async (req, res) => {
     propertyDetails,
   })
 }
+
+export const getProperties = async (req,res) => {
+  let propertyDetails;
+
+  try {
+    propertyDetails = await Property.find({});
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: 'Internal Server Error', err })
+  }
+
+  return res.status(200).json({
+    success: true,
+    propertyDetails,
+  })
+}
