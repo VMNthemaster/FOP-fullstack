@@ -92,3 +92,20 @@ export const getProperties = async (req,res) => {
     propertyDetails,
   })
 }
+
+export const updateProperty = async (req, res) => {
+  const {id, images} = req.body
+
+  try {
+    await Property.findByIdAndUpdate(id, {imageSource: images})
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: 'Internal Server Error' })
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: 'Successfully added images'
+  })
+}
