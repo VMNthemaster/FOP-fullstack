@@ -2,6 +2,8 @@ import Property from '../models/Property'
 
 export const addProperty = async (req, res) => {
   const {
+    owner,
+    metamaskAddress,
     propertyName,
     propertyType,
     price,
@@ -12,6 +14,8 @@ export const addProperty = async (req, res) => {
   } = req.body
 
   if (
+    !owner || 
+    !metamaskAddress ||
     !propertyName ||
     !propertyType ||
     !price ||
@@ -26,6 +30,8 @@ export const addProperty = async (req, res) => {
   }
 
   const newProperty = new Property({
+    owner,
+    metamaskAddress,
     propertyName,
     propertyType,
     price,
