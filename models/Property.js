@@ -1,6 +1,14 @@
 import mongoose from "mongoose";
 
 const propertySchema = new mongoose.Schema({
+    owner: {
+        type: String,
+        required: true
+    },
+    metamaskAddress: {
+        type: String,
+        required: true
+    },
     propertyName: {
         type: String,
         required: true
