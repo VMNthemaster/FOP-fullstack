@@ -1,5 +1,5 @@
 import express from 'express'
-import { addProperty, getProperties, getSingleProperty, updateProperty } from '../controllers/property-controller';
+import { addProperty, getHoldings, getProperties, getSingleProperty, updateHoldings, updateProperty } from '../controllers/property-controller';
 const propertyRouter = express.Router()
 
 propertyRouter.post('/addproperty', addProperty)
@@ -7,5 +7,7 @@ propertyRouter.post('/addproperty', addProperty)
 propertyRouter.get('/getProperty/:tokenID', getSingleProperty)
 propertyRouter.get('/getProperty/', getProperties)
 propertyRouter.patch('/updateProperty', updateProperty)
+propertyRouter.patch('/updateHoldings', updateHoldings)
+propertyRouter.get('/getHoldings', getHoldings)
 
 export default propertyRouter;

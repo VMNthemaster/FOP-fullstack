@@ -1,4 +1,5 @@
 import Property from '../models/Property'
+import Username from '../models/Username'
 
 export const addProperty = async (req, res) => {
   const {
@@ -114,4 +115,61 @@ export const updateProperty = async (req, res) => {
     success: true,
     message: 'Successfully added images'
   })
+}
+
+export const updateHoldings = async (req, res) => {
+  const {username, holding} = req.body
+
+  let userData;
+  try {
+    userData = await Username.findOne({username})
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: 'Internal Server Error' })
+  }
+
+  if(!username){
+    return res
+      .status(401)
+      .json({ success: false, message: 'Username not found' })
+  }
+
+  let originalHoldings = userData.holdings || []
+  originalHoldings.push(holding)
+
+  try {
+    await Username.findOneAndUpdate({username}, {holdings: originalHoldings})
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: 'Internal Server Error' })
+  }
+
+  return res
+      .status(201)
+      .json({ success: true, message: 'Holding Updated Successfully' })
+}
+
+export const getHoldings = async (req, res) => {
+  const {username} = req.body
+
+  let userData;
+  try {
+    userData = await Username.findOne({username})
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: 'Internal Server Error' })
+  }
+
+  if(!username){
+    return res
+      .status(401)
+      .json({ success: false, message: 'Username not found' })
+  }
+
+  return res
+      .status(200)
+      .json({ success: true, message: 'Holding Retrieved Successfully', userData })
 }

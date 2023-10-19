@@ -48,6 +48,7 @@ export const signup = async (req, res) => {
 
   const newUsername = new Username({
     username,
+    category
   })
 
   const newUser = new User({
