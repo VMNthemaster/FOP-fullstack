@@ -173,3 +173,38 @@ export const getHoldings = async (req, res) => {
       .status(200)
       .json({ success: true, message: 'Holding Retrieved Successfully', userData })
 }
+
+export const updateListings = async (req, res) => {
+  const {username, listing} = req.body
+
+  let userData;
+  try {
+    userData = await Username.findOne({username})
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: 'Internal Server Error' })
+  }
+
+  if(!username){
+    return res
+      .status(401)
+      .json({ success: false, message: 'Username not found' })
+  }
+
+  let originalListings = userData.listings || []
+  originalListings.push(listing)
+
+  try {
+    await Username.findOneAndUpdate({username}, {listings: originalListings})
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: 'Internal Server Error' })
+  }
+
+  return res
+      .status(201)
+      .json({ success: true, message: 'Listing Updated Successfully' })
+}
+

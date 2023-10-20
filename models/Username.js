@@ -9,6 +9,12 @@ const holdingsSchema = new mongoose.Schema({
     }
 })
 
+const listingSchema = new mongoose.Schema({
+    tokenID: {
+        type: Number
+    }
+})
+
 const usernameSchema = new mongoose.Schema({  
     username: {
         type: String,
@@ -20,6 +26,9 @@ const usernameSchema = new mongoose.Schema({
     },
     holdings: {
         type: [holdingsSchema]
+    },
+    listings: {
+        type: [listingSchema]
     }
 })
 
