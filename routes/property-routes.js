@@ -8,7 +8,7 @@ propertyRouter.get('/getProperty/:tokenID', getSingleProperty)
 propertyRouter.get('/getProperty/', getProperties)
 propertyRouter.patch('/updateProperty', updateProperty)
 propertyRouter.patch('/updateHoldings', updateHoldings)
-propertyRouter.get('/getHoldings', getHoldings)
+propertyRouter.post('/getHoldings', getHoldings)
 propertyRouter.patch('/updateListings', updateListings)
 
 export default propertyRouter;
